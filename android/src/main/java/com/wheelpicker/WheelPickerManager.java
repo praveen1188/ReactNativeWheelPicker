@@ -15,6 +15,8 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.views.text.ReactFontManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +50,8 @@ public class WheelPickerManager extends SimpleViewManager<WheelPicker>  implemen
                 try {
                     List<String> dataString = new ArrayList<>();
                     for (int i = 0; i <data.size() ; i++) {
-                        dataString.add(data.getString(i));
+                        Log.d("msg", updateTextView(data.getString(i)));
+                        dataString.add(updateTextView(data.getString(i)));
                     }
                     wheelPicker.setData(dataString);
                 } catch (Exception ex){
@@ -59,12 +62,22 @@ public class WheelPickerManager extends SimpleViewManager<WheelPicker>  implemen
         }
     }
 
+    public String updateTextView(String text) {
+        if(text.length() >= 20) {
+            return text.substring(0, 18) + "...";
+        }
+        else  {
+            return text;
+        }
+    }
+
     @ReactProp(name = "isCurved")
     public void setCurved(WheelPicker wheelPicker, Boolean isCurved) {
         if (wheelPicker!=null){
             wheelPicker.setCurved(isCurved);
         }
     }
+
 
     @ReactProp(name = "isCyclic")
     public void setCyclic(WheelPicker wheelPicker, Boolean isCyclic) {
@@ -143,14 +156,6 @@ public class WheelPickerManager extends SimpleViewManager<WheelPicker>  implemen
         }
     }
 
-    @ReactProp(name = "itemTextFontFamily")
-    public void setSelectedItemPosition(WheelPicker wheelPicker, String itemTextFontFamily) {
-      if (wheelPicker!=null){
-        Typeface typeface = ReactFontManager.getInstance().getTypeface(itemTextFontFamily, Typeface.NORMAL, wheelPicker.getContext().getAssets());
-        wheelPicker.setTypeface(typeface);
-      }
-    }
-
     @ReactProp(name = "selectedItemPosition")
     public void setSelectedItemPosition(WheelPicker wheelPicker, int selectedItemPosition) {
         if (wheelPicker!=null){
@@ -162,6 +167,25 @@ public class WheelPickerManager extends SimpleViewManager<WheelPicker>  implemen
     public void setBackgroundColor(WheelPicker wheelPicker, String backgroundColor) {
         if (wheelPicker!=null){
             wheelPicker.setBackgroundColor(Color.parseColor(backgroundColor));
+        }
+    }
+
+    @ReactProp(name = "positionAlign")
+    public void setItemTextAlign(WheelPicker wheelPicker, String textAlign) {
+
+        if (wheelPicker != null) {
+            switch (textAlign) {
+                case "left":
+                    wheelPicker.setItemAlign(WheelPicker.ALIGN_LEFT);
+                    break;
+                case "right":
+                    wheelPicker.setItemAlign(WheelPicker.ALIGN_RIGHT);
+                    break;
+                case "center":
+                default:
+                    wheelPicker.setItemAlign(WheelPicker.ALIGN_CENTER);
+                    break;
+            }
         }
     }
 
@@ -180,8 +204,8 @@ public class WheelPickerManager extends SimpleViewManager<WheelPicker>  implemen
         }
         event.putInt("position", position);
         ((ReactContext) picker.getContext()).getJSModule(RCTEventEmitter.class).receiveEvent(
-            picker.getId(),
-            "topChange",
-            event);
+                picker.getId(),
+                "topChange",
+                event);
     }
 }

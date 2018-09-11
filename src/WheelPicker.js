@@ -26,6 +26,7 @@ type Props = {
   itemTextFontFamily?: string,
   selectedItemPosition?: number,
   backgroundColor?: string,
+  positionAlign?: string,
 }
 
 type State = { selectedItemPosition: number }
